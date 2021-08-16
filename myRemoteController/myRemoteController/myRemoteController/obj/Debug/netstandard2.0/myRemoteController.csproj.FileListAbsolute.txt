@@ -1,0 +1,14 @@
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\bin\Debug\netstandard2.0\myRemoteController.deps.json
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\bin\Debug\netstandard2.0\myRemoteController.dll
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\bin\Debug\netstandard2.0\ref\myRemoteController.dll
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\bin\Debug\netstandard2.0\myRemoteController.pdb
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\myRemoteController.csproj.AssemblyReference.cache
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\App.xaml.g.cs
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\MainPage.xaml.g.cs
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\myRemoteController.AssemblyInfoInputs.cache
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\myRemoteController.AssemblyInfo.cs
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\myRemoteController.csproj.CoreCompileInputs.cache
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\XamlC.stamp
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\myRemoteController.dll
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\ref\myRemoteController.dll
+C:\Users\johan\OneDrive\Desktop\myRemoteController\myRemoteController\myRemoteController\obj\Debug\netstandard2.0\myRemoteController.pdb
