@@ -13,17 +13,23 @@ One app to control my RC Vehicles
 - [ ] View should adjust with the rotation of the device
 
 ## Setup
-### How to Project?
+### How to create the project?
 1. Open Visual Studio
 2. Create New Project
 3. Select "Mobile App (Xamarin.Forms)"
-4. Next
+4. Press Next
 5. Configure New Project
-6. Create
+6. Press Create
 7. Select Empty
 8. Make sure IOS and Android is selected, not Window
-9. Create
+9. Press Create
 
-### Which File where?
+### Importing the files
+1. Open the project
+2. Open the project explorer 
+3. Expand the main folder (segment with the project name)
+4. Replace MainPage.xaml and MainPage.xaml.cs with the one in files (make sure that MainPage.xaml.cs is beneath MainPage.xaml)
+5. Drag and drop CustomCell.cs, Viewinfo.cs and MyValues.cs into the Main Folder
 
-### Picture Location
+### Necessary Steps
+Import Pictures
