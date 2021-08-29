@@ -30,6 +30,3 @@ One app to control my RC Vehicles
 3. Expand the main folder (_segment with the project name_)
 4. Replace MainPage.xaml and MainPage.xaml.cs with the one in files (___make sure that MainPage.xaml.cs is beneath MainPage.xaml___)
 5. Drag and drop CustomCell.cs, Viewinfo.cs and MyValues.cs into the Main Folder
-6. Drag a picture with the name _"NoImageFound.png"_ into both:
-    * Mainfile.Android > Resources > drawable
-    * Mainfile.IOS > Resources
