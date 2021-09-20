@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Xamarin.Forms;
 using Xamarin.Essentials;
 
 
@@ -9,8 +10,7 @@ namespace myRemoteController {
 	class MyValues {
 		private readonly double viewHeight, viewWidth, viewDensity;
 		//spacing is half margin, half padding
-		private readonly int spacing = 10, imgDims = 200, cornerRadius = 15;
-
+		private readonly int spacing = 10, imgDims = 200, cornerRadius = 15, fontSize = 40;
 
 		public MyValues() {
 			//DeviceDisplay Only works on Android
@@ -47,6 +47,10 @@ namespace myRemoteController {
 
 		public int GetPadMarg() {
 			return (int)(spacing / 2);
+		}
+
+		public int GetFontSize() {
+			return fontSize;
 		}
 	}
 }
