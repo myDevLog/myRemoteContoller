@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace myRemoteController
-{
+using Xamarin.Forms;
+
+namespace myRemoteController {
 	public class ViewInfo{
 		public string Name { get; set; }
 		public string ImageName { get; set; }
 
-		public override string ToString() {
+		public string PageName { get; set; }
+
+		public override string ToString(){
 			return Name;
 		}
 	}
