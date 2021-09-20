@@ -20,45 +20,97 @@ namespace myRemoteController{
 			InitializeComponent();
 
 			Info = new List<ViewInfo>();
-			Info.Add(new ViewInfo { Name = "Spitfire", ImageName = "Logo.jpg" });
-			Info.Add(new ViewInfo { Name = "Penis", ImageName = "Icon.png" });
-			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png" });
+			Info.Add(new ViewInfo { Name = "Spitfire", ImageName = "Logo.jpg" , PageName = "SpitfireControl" });
+			Info.Add(new ViewInfo { Name = "Penis", ImageName = "Icon.png", PageName = "NotThere" });
+			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png", PageName = "SpitfireControl" });
+			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png", PageName = "SpitfireControl" });
+			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png", PageName = "SpitfireControl" });
+			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png", PageName = "SpitfireControl" });
+			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png", PageName = "SpitfireControl" });
+			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png", PageName = "SpitfireControl" });
+			Info.Add(new ViewInfo { Name = "Test", ImageName = "Icon.png", PageName = "SpitfireControl" });
 
 
 			amountColumns = CalcAmountColumns();
 
 
-
 			if (amountColumns > 1) {
-				ScrollView scrollableGrid = new ScrollView();
-				Grid test = new Grid();
+				ScrollView scrollableGrid = new ScrollView {
+					VerticalScrollBarVisibility = ScrollBarVisibility.Always
+				};
+
+				Grid viewGrid = new Grid ();
+
+				
 
 				for (int i = 0; i < amountColumns; i++) {
-					test.ColumnDefinitions.Add(new ColumnDefinition());
+					viewGrid.ColumnDefinitions.Add(new ColumnDefinition());
 				}
+
 
 				for (int gridIndex = 0; gridIndex < Info.Count; gridIndex++) {
-					test.Children.Add(GenerateCell(Info[gridIndex].ImageName, Info[gridIndex].Name), gridIndex % amountColumns, (int)(gridIndex / amountColumns) );
+					viewGrid.Children.Add(
+						GenerateCell( Info[gridIndex].ImageName, Info[gridIndex].Name, Info[gridIndex].PageName),
+						gridIndex % amountColumns,
+						(int)(gridIndex / amountColumns)
+					);
 				}
 
+				/*
+				TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+				tapGestureRecognizer.Tapped += async (sender, eventArgs) => {
+					int infoIndex = Grid.GetColumn((Xamarin.Forms.BindableObject)sender) * amountColumns + Grid.GetRow((Xamarin.Forms.BindableObject)sender);
+					string pageName = Info[infoIndex].PageName;
+
+					Type pageType = Type.GetType($"myRemoteController.{pageName}");
+					Page newPage = Activator.CreateInstance(pageType) as Page;
+
+					await Application.Current.MainPage.Navigation.PushAsync(newPage);
+				};
+				
+				viewGrid.GestureRecognizers.Add(tapGestureRecognizer);
+				*/
+
 				//set and show the grid
-				scrollableGrid.Content = test;
+				scrollableGrid.Content = viewGrid;
 				Content = scrollableGrid;
 
 			} else {
+				ListView viewList = new ListView {
+					SelectionMode = ListViewSelectionMode.None,
+					Margin = Values.GetPadMarg(),
+					RowHeight = Values.GetImgDims() / 2
+				};
 
-				ListView viewList = new ListView { SelectionMode = ListViewSelectionMode.None, Margin = Values.GetPadMarg(), RowHeight = Values.GetImgDims() / 2 };
 				viewList.ItemTemplate = new DataTemplate(typeof(CustomCell));
 
+				//set the data
 				viewList.ItemsSource = Info;
-				Content = viewList;
+
+				//create page when item gets tapped
+				viewList.ItemTapped += async (sender, eventArgs) => {
+					string pageName = Info[eventArgs.ItemIndex].PageName;
+					Type pageType = Type.GetType($"myRemoteController.{pageName}");
+					Page newPage = Activator.CreateInstance(pageType) as Page;
+
+					await Application.Current.MainPage.Navigation.PushAsync(newPage);
+				};
+
+				ScrollView scrollableList = new ScrollView {
+					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
+					Content = viewList
+				};
+
+				//show the list
+				Content = scrollableList;
 			}
 		}
 
 
-		private StackLayout GenerateCell(string ImageName, string ViewName) {
-			
-			
+		
+
+
+		private StackLayout GenerateCell(string ImageName, string ViewName, string PageName) {
 
 			Image viewImage = new Image {
 				Source = ImageName,
@@ -83,24 +135,28 @@ namespace myRemoteController{
 				Text = ViewName,
 				HorizontalTextAlignment = TextAlignment.Center,
 				FontAttributes = FontAttributes.Bold,
-				FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label))
+				FontSize = Values.GetFontSize()
 			};
 
+			
+			TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1};
+			tapGestureRecognizer.Tapped += async (object s, EventArgs e) => {
+				Type pageType = Type.GetType($"myRemoteController.{PageName}");
+				Page newPage = Activator.CreateInstance(pageType) as Page;
 
+				await Application.Current.MainPage.Navigation.PushAsync(newPage);
+			};
+			
+			
 			StackLayout controlView = new StackLayout {
 				Orientation = StackOrientation.Vertical,
 				Padding = Values.GetPadMarg(),
-				Children = { viewFrame, viewLabel }
+				Children = { viewFrame, viewLabel },
+				GestureRecognizers = { tapGestureRecognizer }
 			};
 
 			return controlView;
 		}
-
-
-		public async void ToSpitfire(object sender, EventArgs e) {
-			await Navigation.PushAsync(new SpitfireControl());
-		}
-
 
 		private int CalcAmountColumns() {
 			int imgDims = Values.GetImgDims(), spacing = Values.GetSpacing();
