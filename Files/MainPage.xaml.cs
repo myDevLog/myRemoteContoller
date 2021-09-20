@@ -34,14 +34,87 @@ namespace myRemoteController{
 			amountColumns = CalcAmountColumns();
 
 
-			if (amountColumns > 1) {
-				ScrollView scrollableGrid = new ScrollView {
-					VerticalScrollBarVisibility = ScrollBarVisibility.Always
+			if (amountColumns == 1) {
+
+				CollectionView viewCollection = new CollectionView {
+					SelectionMode = SelectionMode.Single,
+					Margin = Values.GetPadMarg(),
+					ItemsLayout = new GridItemsLayout(amountColumns, ItemsLayoutOrientation.Vertical)
 				};
 
-				Grid viewGrid = new Grid ();
+				/*
+				viewCollection.SelectionChanged += async (object sender, SelectionChangedEventArgs eventArgs) => {
+					//stop a crash because the deselection causes another event without selected item
+					if(((CollectionView)sender).SelectedItem != null) { 
+						string pageName = (eventArgs.CurrentSelection.FirstOrDefault() as ViewInfo)?.PageName;
 
-				
+						Type pageType = Type.GetType($"myRemoteController.{pageName}");
+						Page newPage = Activator.CreateInstance(pageType) as Page;
+
+						await Application.Current.MainPage.Navigation.PushAsync(newPage);
+
+						//deselect Item
+						((CollectionView)sender).SelectedItem = null;
+					}
+				};
+				*/
+
+
+				viewCollection.SetBinding(ItemsView.ItemsSourceProperty, "Info");
+				viewCollection.ItemsSource = Info;
+
+				viewCollection.ItemTemplate = new DataTemplate(() => {
+
+					Label viewLabel = new Label {
+						FontAttributes = FontAttributes.Bold,
+						FontSize = Values.GetFontSize(),
+						HorizontalTextAlignment = TextAlignment.Center,
+						Margin = Values.GetPadMarg(),
+						Padding = 0
+					};
+					viewLabel.SetBinding(Label.TextProperty, "Name");
+
+					Image viewImage = new Image {
+						Aspect = Aspect.AspectFill
+					};
+					viewImage.SetBinding(Image.SourceProperty, "ImageName");
+
+
+					int imgDims = Values.GetImgDims();
+					Frame viewFrame = new Frame {
+						Content = viewImage,
+						CornerRadius = Values.GetCornerRadius(),
+						IsClippedToBounds = true,
+						WidthRequest = imgDims,
+						HeightRequest = imgDims,
+						VerticalOptions = LayoutOptions.Center,
+						HorizontalOptions = LayoutOptions.Center,
+						Padding = 0,
+						HasShadow = false
+					};
+
+					string pageName = "SpitfireControl";
+
+					TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
+					tapGestureRecognizer.Tapped += async (sender, EventArgs) => {
+						Type pageType = Type.GetType($"myRemoteController.{pageName}");
+						Page newPage = Activator.CreateInstance(pageType) as Page;
+
+						await Application.Current.MainPage.Navigation.PushAsync(newPage);
+					};
+					
+					StackLayout controlView = new StackLayout {
+						Orientation = StackOrientation.Vertical,
+						Padding = Values.GetPadMarg(),
+						Children = { viewFrame, viewLabel },
+						GestureRecognizers = { tapGestureRecognizer }
+					};
+					
+					return controlView;
+				});
+
+				/*
+				Grid viewGrid = new Grid ();
 
 				for (int i = 0; i < amountColumns; i++) {
 					viewGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -54,7 +127,7 @@ namespace myRemoteController{
 						gridIndex % amountColumns,
 						(int)(gridIndex / amountColumns)
 					);
-				}
+				}*/
 
 				/*
 				TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
@@ -71,8 +144,12 @@ namespace myRemoteController{
 				viewGrid.GestureRecognizers.Add(tapGestureRecognizer);
 				*/
 
-				//set and show the grid
-				scrollableGrid.Content = viewGrid;
+				ScrollView scrollableGrid = new ScrollView {
+					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
+					Content = viewCollection
+				};
+
+				//show the grid
 				Content = scrollableGrid;
 
 			} else {
@@ -87,6 +164,7 @@ namespace myRemoteController{
 				//set the data
 				viewList.ItemsSource = Info;
 
+
 				//create page when item gets tapped
 				viewList.ItemTapped += async (sender, eventArgs) => {
 					string pageName = Info[eventArgs.ItemIndex].PageName;
@@ -95,6 +173,7 @@ namespace myRemoteController{
 
 					await Application.Current.MainPage.Navigation.PushAsync(newPage);
 				};
+
 
 				ScrollView scrollableList = new ScrollView {
 					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
