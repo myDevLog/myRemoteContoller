@@ -4,20 +4,19 @@ using System.Text;
 
 using Xamarin.Forms;
 
+
 namespace myRemoteController {
 	class CustomCell : ViewCell{
 
 		private readonly MyValues Values = new MyValues();
 
 		public CustomCell() {
-			
 			Label cellText = new Label {
 				FontAttributes = FontAttributes.Bold,
-				FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
+				FontSize = Values.GetFontSize(),
 				VerticalTextAlignment = TextAlignment.Center,
 				Margin = Values.GetPadMarg(),
 				Padding = 0
-				
 			};
 
 
@@ -37,12 +36,12 @@ namespace myRemoteController {
 				HasShadow = false
 			};
 
+
 			StackLayout myCell = new StackLayout {
 				Orientation = StackOrientation.Horizontal,
 				Children = { cellFrame, cellText },
 				Margin = Values.GetPadMarg()
 			};
-			
 
 			View = myCell;
 

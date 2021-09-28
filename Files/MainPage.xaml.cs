@@ -15,7 +15,7 @@ namespace myRemoteController{
 		private readonly MyValues Values = new MyValues();
 		private readonly int amountColumns;
 
-
+		public int index = 0;
 		public MainPage(){
 			InitializeComponent();
 
@@ -32,7 +32,7 @@ namespace myRemoteController{
 
 
 			amountColumns = CalcAmountColumns();
-
+			List <StackLayout> links = new List<StackLayout>();
 
 			if (amountColumns == 1) {
 
@@ -93,12 +93,13 @@ namespace myRemoteController{
 						HasShadow = false
 					};
 
-					string pageName = "SpitfireControl";
 
 					TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
 					tapGestureRecognizer.Tapped += async (sender, EventArgs) => {
-						Type pageType = Type.GetType($"myRemoteController.{pageName}");
+						Type pageType = Type.GetType($"myRemoteController.{Info[index].PageName}");
 						Page newPage = Activator.CreateInstance(pageType) as Page;
+
+						index++;
 
 						await Application.Current.MainPage.Navigation.PushAsync(newPage);
 					};
@@ -109,40 +110,11 @@ namespace myRemoteController{
 						Children = { viewFrame, viewLabel },
 						GestureRecognizers = { tapGestureRecognizer }
 					};
-					
+
+					links.Add(controlView);
+
 					return controlView;
 				});
-
-				/*
-				Grid viewGrid = new Grid ();
-
-				for (int i = 0; i < amountColumns; i++) {
-					viewGrid.ColumnDefinitions.Add(new ColumnDefinition());
-				}
-
-
-				for (int gridIndex = 0; gridIndex < Info.Count; gridIndex++) {
-					viewGrid.Children.Add(
-						GenerateCell( Info[gridIndex].ImageName, Info[gridIndex].Name, Info[gridIndex].PageName),
-						gridIndex % amountColumns,
-						(int)(gridIndex / amountColumns)
-					);
-				}*/
-
-				/*
-				TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-				tapGestureRecognizer.Tapped += async (sender, eventArgs) => {
-					int infoIndex = Grid.GetColumn((Xamarin.Forms.BindableObject)sender) * amountColumns + Grid.GetRow((Xamarin.Forms.BindableObject)sender);
-					string pageName = Info[infoIndex].PageName;
-
-					Type pageType = Type.GetType($"myRemoteController.{pageName}");
-					Page newPage = Activator.CreateInstance(pageType) as Page;
-
-					await Application.Current.MainPage.Navigation.PushAsync(newPage);
-				};
-				
-				viewGrid.GestureRecognizers.Add(tapGestureRecognizer);
-				*/
 
 				ScrollView scrollableGrid = new ScrollView {
 					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
