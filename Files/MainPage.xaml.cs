@@ -16,6 +16,7 @@ namespace myRemoteController{
 		private readonly int amountColumns;
 
 		public int index = 0;
+		
 		public MainPage(){
 			InitializeComponent();
 
@@ -42,10 +43,12 @@ namespace myRemoteController{
 					ItemsLayout = new GridItemsLayout(amountColumns, ItemsLayoutOrientation.Vertical)
 				};
 
-				/*
+
 				viewCollection.SelectionChanged += async (object sender, SelectionChangedEventArgs eventArgs) => {
 					//stop a crash because the deselection causes another event without selected item
-					if(((CollectionView)sender).SelectedItem != null) { 
+					CollectionView s = (CollectionView)sender;
+					
+					if(s.SelectedItem != null) { 
 						string pageName = (eventArgs.CurrentSelection.FirstOrDefault() as ViewInfo)?.PageName;
 
 						Type pageType = Type.GetType($"myRemoteController.{pageName}");
@@ -54,61 +57,31 @@ namespace myRemoteController{
 						await Application.Current.MainPage.Navigation.PushAsync(newPage);
 
 						//deselect Item
-						((CollectionView)sender).SelectedItem = null;
+						s.SelectedItem = null;
 					}
 				};
-				*/
 
 
 				viewCollection.SetBinding(ItemsView.ItemsSourceProperty, "Info");
 				viewCollection.ItemsSource = Info;
 
 				viewCollection.ItemTemplate = new DataTemplate(() => {
+					MyElements Elements = new MyElements();
 
-					Label viewLabel = new Label {
-						FontAttributes = FontAttributes.Bold,
-						FontSize = Values.GetFontSize(),
-						HorizontalTextAlignment = TextAlignment.Center,
-						Margin = Values.GetPadMarg(),
-						Padding = 0
-					};
+					Label viewLabel = Elements.CreateLabel();
 					viewLabel.SetBinding(Label.TextProperty, "Name");
 
-					Image viewImage = new Image {
-						Aspect = Aspect.AspectFill
-					};
+					Image viewImage = Elements.CreateImage();
 					viewImage.SetBinding(Image.SourceProperty, "ImageName");
 
-
-					int imgDims = Values.GetImgDims();
-					Frame viewFrame = new Frame {
-						Content = viewImage,
-						CornerRadius = Values.GetCornerRadius(),
-						IsClippedToBounds = true,
-						WidthRequest = imgDims,
-						HeightRequest = imgDims,
-						VerticalOptions = LayoutOptions.Center,
-						HorizontalOptions = LayoutOptions.Center,
-						Padding = 0,
-						HasShadow = false
-					};
+					Frame viewFrame = Elements.CreateCollectionFrame();
+					viewFrame.Content = viewImage;
 
 
-					TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
-					tapGestureRecognizer.Tapped += async (sender, EventArgs) => {
-						Type pageType = Type.GetType($"myRemoteController.{Info[index].PageName}");
-						Page newPage = Activator.CreateInstance(pageType) as Page;
-
-						index++;
-
-						await Application.Current.MainPage.Navigation.PushAsync(newPage);
-					};
-					
 					StackLayout controlView = new StackLayout {
 						Orientation = StackOrientation.Vertical,
 						Padding = Values.GetPadMarg(),
-						Children = { viewFrame, viewLabel },
-						GestureRecognizers = { tapGestureRecognizer }
+						Children = { viewFrame, viewLabel }
 					};
 
 					links.Add(controlView);
@@ -116,13 +89,15 @@ namespace myRemoteController{
 					return controlView;
 				});
 
-				ScrollView scrollableGrid = new ScrollView {
+				
+
+				ScrollView scrollableView = new ScrollView {
 					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
 					Content = viewCollection
 				};
 
 				//show the grid
-				Content = scrollableGrid;
+				Content = scrollableView;
 
 			} else {
 				ListView viewList = new ListView {
