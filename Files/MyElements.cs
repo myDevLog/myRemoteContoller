@@ -59,5 +59,15 @@ namespace myRemoteController {
 
 			return CollectionFrame;
 		}
+
+		public StackLayout CreateStackLayout(StackOrientation stackOrientation) {
+
+			StackLayout controlView = new StackLayout {
+				Orientation = stackOrientation,
+				Padding = Values.GetPadMarg()
+			};
+
+			return controlView;
+		}
 	}
 }

@@ -15,8 +15,7 @@ namespace myRemoteController{
 		private readonly MyValues Values = new MyValues();
 		private readonly int amountColumns;
 
-		public int index = 0;
-		
+
 		public MainPage(){
 			InitializeComponent();
 
@@ -33,7 +32,11 @@ namespace myRemoteController{
 
 
 			amountColumns = CalcAmountColumns();
-			List <StackLayout> links = new List<StackLayout>();
+
+
+			ScrollView scrollableView = new ScrollView {
+				VerticalScrollBarVisibility = ScrollBarVisibility.Always
+			};
 
 			if (amountColumns == 1) {
 
@@ -44,11 +47,15 @@ namespace myRemoteController{
 				};
 
 
+				viewCollection.SetBinding(ItemsView.ItemsSourceProperty, "Info");
+				viewCollection.ItemsSource = Info;
+
+
 				viewCollection.SelectionChanged += async (object sender, SelectionChangedEventArgs eventArgs) => {
 					//stop a crash because the deselection causes another event without selected item
 					CollectionView s = (CollectionView)sender;
-					
-					if(s.SelectedItem != null) { 
+
+					if (s.SelectedItem != null) {
 						string pageName = (eventArgs.CurrentSelection.FirstOrDefault() as ViewInfo)?.PageName;
 
 						Type pageType = Type.GetType($"myRemoteController.{pageName}");
@@ -61,9 +68,6 @@ namespace myRemoteController{
 					}
 				};
 
-
-				viewCollection.SetBinding(ItemsView.ItemsSourceProperty, "Info");
-				viewCollection.ItemsSource = Info;
 
 				viewCollection.ItemTemplate = new DataTemplate(() => {
 					MyElements Elements = new MyElements();
@@ -78,26 +82,16 @@ namespace myRemoteController{
 					viewFrame.Content = viewImage;
 
 
-					StackLayout controlView = new StackLayout {
-						Orientation = StackOrientation.Vertical,
-						Padding = Values.GetPadMarg(),
-						Children = { viewFrame, viewLabel }
-					};
+					StackLayout controlView = Elements.CreateStackLayout(StackOrientation.Vertical);
+					controlView.Children.Add(viewFrame);
+					controlView.Children.Add(viewLabel);
 
-					links.Add(controlView);
 
 					return controlView;
 				});
 
-				
 
-				ScrollView scrollableView = new ScrollView {
-					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
-					Content = viewCollection
-				};
-
-				//show the grid
-				Content = scrollableView;
+				scrollableView.Content = viewCollection;
 
 			} else {
 				ListView viewList = new ListView {
@@ -122,67 +116,12 @@ namespace myRemoteController{
 				};
 
 
-				ScrollView scrollableList = new ScrollView {
-					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
-					Content = viewList
-				};
-
-				//show the list
-				Content = scrollableList;
+				scrollableView.Content = viewList;
 			}
+
+			Content = scrollableView;
 		}
 
-
-		
-
-
-		private StackLayout GenerateCell(string ImageName, string ViewName, string PageName) {
-
-			Image viewImage = new Image {
-				Source = ImageName,
-				Aspect = Aspect.AspectFill
-			};
-
-			int imgDims = Values.GetImgDims();
-			Frame viewFrame = new Frame {
-				Content = viewImage,
-				CornerRadius = Values.GetCornerRadius(),
-				IsClippedToBounds = true,
-				HeightRequest = imgDims,
-				WidthRequest = imgDims,
-				VerticalOptions = LayoutOptions.Center,
-				HorizontalOptions = LayoutOptions.Center,
-				HasShadow = false,
-				Padding = 0
-			};
-
-
-			Label viewLabel = new Label {
-				Text = ViewName,
-				HorizontalTextAlignment = TextAlignment.Center,
-				FontAttributes = FontAttributes.Bold,
-				FontSize = Values.GetFontSize()
-			};
-
-			
-			TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1};
-			tapGestureRecognizer.Tapped += async (object s, EventArgs e) => {
-				Type pageType = Type.GetType($"myRemoteController.{PageName}");
-				Page newPage = Activator.CreateInstance(pageType) as Page;
-
-				await Application.Current.MainPage.Navigation.PushAsync(newPage);
-			};
-			
-			
-			StackLayout controlView = new StackLayout {
-				Orientation = StackOrientation.Vertical,
-				Padding = Values.GetPadMarg(),
-				Children = { viewFrame, viewLabel },
-				GestureRecognizers = { tapGestureRecognizer }
-			};
-
-			return controlView;
-		}
 
 		private int CalcAmountColumns() {
 			int imgDims = Values.GetImgDims(), spacing = Values.GetSpacing();
