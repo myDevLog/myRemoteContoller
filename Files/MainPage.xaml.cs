@@ -34,6 +34,10 @@ namespace myRemoteController{
 			amountColumns = CalcAmountColumns();
 
 
+			ScrollView scrollableView = new ScrollView {
+				VerticalScrollBarVisibility = ScrollBarVisibility.Always
+			};
+
 			if (amountColumns == 1) {
 
 				CollectionView viewCollection = new CollectionView {
@@ -42,10 +46,16 @@ namespace myRemoteController{
 					ItemsLayout = new GridItemsLayout(amountColumns, ItemsLayoutOrientation.Vertical)
 				};
 
-				/*
+
+				viewCollection.SetBinding(ItemsView.ItemsSourceProperty, "Info");
+				viewCollection.ItemsSource = Info;
+
+
 				viewCollection.SelectionChanged += async (object sender, SelectionChangedEventArgs eventArgs) => {
 					//stop a crash because the deselection causes another event without selected item
-					if(((CollectionView)sender).SelectedItem != null) { 
+					CollectionView s = (CollectionView)sender;
+
+					if (s.SelectedItem != null) {
 						string pageName = (eventArgs.CurrentSelection.FirstOrDefault() as ViewInfo)?.PageName;
 
 						Type pageType = Type.GetType($"myRemoteController.{pageName}");
@@ -54,103 +64,34 @@ namespace myRemoteController{
 						await Application.Current.MainPage.Navigation.PushAsync(newPage);
 
 						//deselect Item
-						((CollectionView)sender).SelectedItem = null;
+						s.SelectedItem = null;
 					}
 				};
-				*/
 
-
-				viewCollection.SetBinding(ItemsView.ItemsSourceProperty, "Info");
-				viewCollection.ItemsSource = Info;
 
 				viewCollection.ItemTemplate = new DataTemplate(() => {
+					MyElements Elements = new MyElements();
 
-					Label viewLabel = new Label {
-						FontAttributes = FontAttributes.Bold,
-						FontSize = Values.GetFontSize(),
-						HorizontalTextAlignment = TextAlignment.Center,
-						Margin = Values.GetPadMarg(),
-						Padding = 0
-					};
+					Label viewLabel = Elements.CreateLabel();
 					viewLabel.SetBinding(Label.TextProperty, "Name");
 
-					Image viewImage = new Image {
-						Aspect = Aspect.AspectFill
-					};
+					Image viewImage = Elements.CreateImage();
 					viewImage.SetBinding(Image.SourceProperty, "ImageName");
 
+					Frame viewFrame = Elements.CreateCollectionFrame();
+					viewFrame.Content = viewImage;
 
-					int imgDims = Values.GetImgDims();
-					Frame viewFrame = new Frame {
-						Content = viewImage,
-						CornerRadius = Values.GetCornerRadius(),
-						IsClippedToBounds = true,
-						WidthRequest = imgDims,
-						HeightRequest = imgDims,
-						VerticalOptions = LayoutOptions.Center,
-						HorizontalOptions = LayoutOptions.Center,
-						Padding = 0,
-						HasShadow = false
-					};
 
-					string pageName = "SpitfireControl";
+					StackLayout controlView = Elements.CreateStackLayout(StackOrientation.Vertical);
+					controlView.Children.Add(viewFrame);
+					controlView.Children.Add(viewLabel);
 
-					TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
-					tapGestureRecognizer.Tapped += async (sender, EventArgs) => {
-						Type pageType = Type.GetType($"myRemoteController.{pageName}");
-						Page newPage = Activator.CreateInstance(pageType) as Page;
 
-						await Application.Current.MainPage.Navigation.PushAsync(newPage);
-					};
-					
-					StackLayout controlView = new StackLayout {
-						Orientation = StackOrientation.Vertical,
-						Padding = Values.GetPadMarg(),
-						Children = { viewFrame, viewLabel },
-						GestureRecognizers = { tapGestureRecognizer }
-					};
-					
 					return controlView;
 				});
 
-				/*
-				Grid viewGrid = new Grid ();
 
-				for (int i = 0; i < amountColumns; i++) {
-					viewGrid.ColumnDefinitions.Add(new ColumnDefinition());
-				}
-
-
-				for (int gridIndex = 0; gridIndex < Info.Count; gridIndex++) {
-					viewGrid.Children.Add(
-						GenerateCell( Info[gridIndex].ImageName, Info[gridIndex].Name, Info[gridIndex].PageName),
-						gridIndex % amountColumns,
-						(int)(gridIndex / amountColumns)
-					);
-				}*/
-
-				/*
-				TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-				tapGestureRecognizer.Tapped += async (sender, eventArgs) => {
-					int infoIndex = Grid.GetColumn((Xamarin.Forms.BindableObject)sender) * amountColumns + Grid.GetRow((Xamarin.Forms.BindableObject)sender);
-					string pageName = Info[infoIndex].PageName;
-
-					Type pageType = Type.GetType($"myRemoteController.{pageName}");
-					Page newPage = Activator.CreateInstance(pageType) as Page;
-
-					await Application.Current.MainPage.Navigation.PushAsync(newPage);
-				};
-				
-				viewGrid.GestureRecognizers.Add(tapGestureRecognizer);
-				*/
-
-				ScrollView scrollableGrid = new ScrollView {
-					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
-					Content = viewCollection
-				};
-
-				//show the grid
-				Content = scrollableGrid;
+				scrollableView.Content = viewCollection;
 
 			} else {
 				ListView viewList = new ListView {
@@ -175,67 +116,12 @@ namespace myRemoteController{
 				};
 
 
-				ScrollView scrollableList = new ScrollView {
-					VerticalScrollBarVisibility = ScrollBarVisibility.Always,
-					Content = viewList
-				};
-
-				//show the list
-				Content = scrollableList;
+				scrollableView.Content = viewList;
 			}
+
+			Content = scrollableView;
 		}
 
-
-		
-
-
-		private StackLayout GenerateCell(string ImageName, string ViewName, string PageName) {
-
-			Image viewImage = new Image {
-				Source = ImageName,
-				Aspect = Aspect.AspectFill
-			};
-
-			int imgDims = Values.GetImgDims();
-			Frame viewFrame = new Frame {
-				Content = viewImage,
-				CornerRadius = Values.GetCornerRadius(),
-				IsClippedToBounds = true,
-				HeightRequest = imgDims,
-				WidthRequest = imgDims,
-				VerticalOptions = LayoutOptions.Center,
-				HorizontalOptions = LayoutOptions.Center,
-				HasShadow = false,
-				Padding = 0
-			};
-
-
-			Label viewLabel = new Label {
-				Text = ViewName,
-				HorizontalTextAlignment = TextAlignment.Center,
-				FontAttributes = FontAttributes.Bold,
-				FontSize = Values.GetFontSize()
-			};
-
-			
-			TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer { NumberOfTapsRequired = 1};
-			tapGestureRecognizer.Tapped += async (object s, EventArgs e) => {
-				Type pageType = Type.GetType($"myRemoteController.{PageName}");
-				Page newPage = Activator.CreateInstance(pageType) as Page;
-
-				await Application.Current.MainPage.Navigation.PushAsync(newPage);
-			};
-			
-			
-			StackLayout controlView = new StackLayout {
-				Orientation = StackOrientation.Vertical,
-				Padding = Values.GetPadMarg(),
-				Children = { viewFrame, viewLabel },
-				GestureRecognizers = { tapGestureRecognizer }
-			};
-
-			return controlView;
-		}
 
 		private int CalcAmountColumns() {
 			int imgDims = Values.GetImgDims(), spacing = Values.GetSpacing();
