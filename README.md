@@ -26,6 +26,7 @@ Drawbacks:
     2. Keep my nesting as low as possible
     3. Use the single responsibility principle for every function
     4. Give variables, functions and classes meaningful names
+2. Use patterns and tactics when beneficial, to learn about them and their implementation
 
 <br>
 
