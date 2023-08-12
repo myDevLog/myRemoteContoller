@@ -20,6 +20,15 @@ Drawbacks:
 
 <br>
 
+## Personal goals for this project:
+1. Clean Code. In the past i always got lost in my own code, therefore i want to:
+    1. Write self-documenting code
+    2. Keep my nesting as low as possible
+    3. Use the single responsibility principle for every function
+    4. Give variables, functions and classes meaningful names
+
+<br>
+
 ## Specifications:
 - [ ] One screen which lists the different controlviews for different RC-vehicles
 - [ ] Listed views should contain a name and a image 
